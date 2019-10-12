@@ -87,14 +87,13 @@ if __name__ == "__main__":
     for entity in ["AIRLINE", "ORIGIN_AIRPORT", "DESTINATION_AIRPORT"]:
         results += solve(entity)
 
-        with open("FlightDelay.txt", "w") as f:
-            for problem in results:
-                f.write(str(problem)+'\n')
+    with open("FlightDelay.txt", "w") as f:
+        for problem in results:
+            f.write(str(problem)+'\n')
 
-
-        with open("FlightDelay.json", "w") as f:
-            for problem in results:
-                print(problem.to_json(), file=f)
+    with open("FlightDelay.json", "w") as f:
+        for problem in results:
+            print(problem.to_json(), file=f)
 
 
             

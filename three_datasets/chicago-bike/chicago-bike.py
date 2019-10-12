@@ -10,16 +10,23 @@ import numpy as np
 def solve(entity_col):
     df = pd.read_csv("data/bike-sampled.csv")
     df['date'] = df['date'].apply(lambda x: datetime.strptime(x, "%Y-%m-%d"))
-    df = df.sort_values(by=['date'])
+    df = df.sort_values(by=['date']) # sort all the items by the time in an ascending order
 
     meta = trane.TableMeta(json.loads(open('data/meta.json').read()))
-    if entity_col == "__fake_root_entity__":
+    # print('meta: ', meta)
+
+    if entity_col == "__fake_root_entity__": # actually, false
         df, meta = trane.overall_prediction_helper(df, meta)
+        # print('df, meta: ', df, meta) # not executed
 
     # MAP str to int
     df_ft = df.copy()
     str_col_list = ['usertype', 'gender']
     str_mappers = {}
+
+    # # print results
+    # print('top results: ', df_ft['usertype'].head())
+
     for str_col in str_col_list:
         str_to_id = {}
         id_to_str = []
@@ -30,8 +37,11 @@ def solve(entity_col):
             id_to_str.append(item)
             n_entity += 1
 
-        if str_col == entity_col:
+        if str_col == entity_col: # check if equal: usually false
             df[str_col] = df[str_col].apply(lambda x: str_to_id[x])
+            print('str_col: ', str_col)
+        print('interation: ', str_col, entity_col) # iterate
+
         df_ft[str_col] = df_ft[str_col].apply(lambda x: str_to_id[x])
         str_mappers[str_col] = (str_to_id, id_to_str)
 
@@ -49,7 +59,6 @@ def solve(entity_col):
                                             }, 'bikes')
     features.compute_features(df_ft, cutoff_strategy, 5)
 
-
     problem_generator = trane.PredictionProblemGenerator(
         table_meta=meta, entity_col=entity_col, time_col="date")
 
@@ -66,20 +75,20 @@ def solve(entity_col):
 ##                                                 )
 ##
 ##    result = trane.multi_process_evaluation(evaluator, problems, features, processes=12)
-    
 
 
 if __name__ == "__main__":
     results = []
     for entity in ["from_station_id","to_station_id"]:
+        print('entity: ', entity)
         results+=solve(entity)
-        
 
     with open("ChicagoBike.txt", 'w') as f:
         for problem in results:
-            f.write(str(problem)+'\n')
+            f.write(str(problem)+'\n') ### In the function defined in the class 
+            print('problem: ', problem)
 
-    #result = trane.multi_process_evaluation(evaluator, problems, features)
+    ###result = trane.multi_process_evaluation(evaluator, problems, features)
     with open("ChicagoBike.json", "w") as f:
         for problem in results:
             print(problem.to_json(), file=f)

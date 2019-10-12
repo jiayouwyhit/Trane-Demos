@@ -137,7 +137,7 @@ class PredictionProblem:
             df = operation.execute(df)
         return df
 
-    def __str__(self):
+    def __str__(self): # 这个函数很重要，会通过 str(problem_instance) 把一个problem instance转换成为一个str对象
         """
         This function converts Prediction Problems to English.
 
@@ -158,7 +158,12 @@ class PredictionProblem:
         # dataops are a series of operations containing one and only one
         # aggregation op at its end
 
+        print('starting--------------------------')
+        print(description)
+        print('self.operations[-1]: ', self.operations[-1])
+
         description += self._describe_aggop(self.operations[-1])
+        print(description)
 
         # cycle through ops, pick out filters and describe them
         filterop_desc_arr = []
@@ -169,10 +174,14 @@ class PredictionProblem:
         # join filter ops with ands and append to the description
         if len(filterop_desc_arr) > 0:
             description += ' and '.join(filterop_desc_arr)
+            print('大于0：\n', description)
 
         # add the cutoff strategy description if it exists
         if self.cutoff_strategy:
+            print('cutoff_strategy: ', self.cutoff_strategy, '\n')
             description += ' ' + self.cutoff_strategy.description
+        print(description)
+        print('ending--------------------------')
 
         return description
 

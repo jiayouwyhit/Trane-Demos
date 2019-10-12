@@ -66,24 +66,29 @@ class PredictionProblemGenerator:
         success_attempts = 0
         for op_col_combo in iter_over_ops():
             #print("\rSuccess/Attempt = {}/{}".format(success_attempts, all_attempts), end="")
+            print('op_col_combo: ', op_col_combo)
+
             all_attempts += 1
             ag_col, filter_col, agg_op_name, filter_op_name = op_col_combo
 
             agg_op_obj = getattr(agg_ops, agg_op_name)(ag_col)  # noqa
             filter_op_obj = getattr(filter_ops, filter_op_name)(filter_col)  # noqa
+            print('agg_op_obj: ', agg_op_obj)
+            print('filter_op_obj: ', filter_op_obj)
 
             operations = [filter_op_obj, agg_op_obj]
 
             problem = PredictionProblem(
                 operations=operations, entity_col=self.entity_col, time_col=self.time_col,
                 table_meta=self.table_meta, cutoff_strategy=None)
-
+            print('problem: ', problem)
+            
             if problem.is_valid():
                 problems.append(problem)
                 success_attempts += 1
         print("\rSuccess/Attempt = {}/{}".format(success_attempts, all_attempts))
 
-        print('ekbar')
+        # print('ekbar')
         return problems
 
     def ensure_valid_inputs(self):
